@@ -29,7 +29,9 @@ jobs:
         cache: maven
     - name: Build with Maven
     - shell: bash
-      run: cd RateLimiter/ && mvn clean install
+      run: | 
+        cd ./LLD-Patterns/RateLimiter/
+        mvn clean install
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
