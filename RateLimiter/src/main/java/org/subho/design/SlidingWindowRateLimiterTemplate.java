@@ -5,20 +5,18 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class SlidingWindowRateLimiter implements RateLimiter{
+public class SlidingWindowRateLimiterTemplate extends AbstractRateLimiter{
 
-    private int maxRequests;
-    private long windowSizeInMillis;
     private Map<String, Queue<Long>> requestTimestamps;
 
-    public SlidingWindowRateLimiter(int maxRequests, long windowSizeInMillis) {
-        this.maxRequests = maxRequests;
-        this.windowSizeInMillis = windowSizeInMillis;
-        requestTimestamps = new HashMap<>();
+    public SlidingWindowRateLimiterTemplate(int maxRequests, long windowSizeInMillis) {
+        super(maxRequests, windowSizeInMillis);
+        this.requestTimestamps = new HashMap<>();
     }
 
     @Override
-    public boolean allowRequest(String clientId) {
+    protected boolean isRequestAllowed(String clientId) {
+
         long currentTime = System.currentTimeMillis();
         requestTimestamps.putIfAbsent(clientId, new LinkedList<>());
 
