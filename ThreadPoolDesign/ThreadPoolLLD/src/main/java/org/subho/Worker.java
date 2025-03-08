@@ -17,19 +17,22 @@ public class Worker extends Thread{
     public void run() {
         System.out.println("Started worker " + Thread.currentThread().getName());
 
-        while(!isShutdownInitiated.get() || !taskQueue.isEmpty()) {
+        while(true) {
             System.out.println("[status-"+Thread.currentThread().getName()+"]" + " shutdown:" + isShutdownInitiated.get() + " | task:"+taskQueue.size());
             //System.out.println("Shutdown status " + isShutdownInitiated.get());
             try{
-                Runnable task = taskQueue.take();
-                task.run();
-            } catch (InterruptedException ie) {
-                System.out.println("Exception " + ie);
-                if(isShutdownInitiated.get()) {
-
-                    Thread.currentThread().interrupt();
+                if(isShutdownInitiated.get() && taskQueue.isEmpty()) {
                     break;
                 }
+                Runnable task = taskQueue.poll();
+                if(task != null) {
+                    task.run();
+                } else {
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException ie) {
+                System.out.println("Worker " + Thread.currentThread().getName() + " interrupted " + ie);
+                break;
             }
         }
         System.out.println("[status-"+Thread.currentThread().getName()+"]" + " shutdown:" + isShutdownInitiated.get() + " | task:"+taskQueue.size());
