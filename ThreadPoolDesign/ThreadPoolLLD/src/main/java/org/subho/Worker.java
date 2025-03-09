@@ -5,10 +5,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Worker extends Thread{
 
-    private final BlockingQueue<Runnable> taskQueue;
+    //private final BlockingQueue<Runnable> taskQueue;
+    private final TaskScheduler taskQueue;
     private final AtomicBoolean isShutdownInitiated;
 
-    public Worker(BlockingQueue<Runnable> taskQueue, AtomicBoolean isShutdownInitiated) {
+    /*public Worker(BlockingQueue<Runnable> taskQueue, AtomicBoolean isShutdownInitiated) {
+        this.taskQueue = taskQueue;
+        this.isShutdownInitiated = isShutdownInitiated;
+    }*/
+
+    public Worker(TaskScheduler taskQueue, AtomicBoolean isShutdownInitiated) {
         this.taskQueue = taskQueue;
         this.isShutdownInitiated = isShutdownInitiated;
     }
@@ -24,7 +30,8 @@ public class Worker extends Thread{
                 if(isShutdownInitiated.get() && taskQueue.isEmpty()) {
                     break;
                 }
-                Runnable task = taskQueue.poll();
+                //Runnable task = taskQueue.poll();
+                Runnable task = taskQueue.fetchTask();
                 if(task != null) {
                     task.run();
                 } else {

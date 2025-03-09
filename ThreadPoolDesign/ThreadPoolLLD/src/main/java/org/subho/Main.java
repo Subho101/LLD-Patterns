@@ -5,7 +5,7 @@ package org.subho;
 public class Main {
     public static void main(String[] args) {
 
-        ThreadPool threadPool = ThreadPool.getInstance(3);
+        ThreadPool threadPool = ThreadPool.getInstance(3, new FIFOScheduler());
         for(int i=0; i<10; i++) {
             threadPool.submitTask(new Task("Task-" + (i+1)));
         }

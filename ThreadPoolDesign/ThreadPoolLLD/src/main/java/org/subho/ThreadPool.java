@@ -6,12 +6,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThreadPool {
     private static ThreadPool INSTANCE;
-    private final BlockingQueue<Runnable> taskQueue;
+    //private final BlockingQueue<Runnable> taskQueue;
+    private final TaskScheduler taskQueue;
     private final Thread[] workers;
     private final AtomicBoolean isShutdownInitiated;
 
-    private ThreadPool(int numOfThreads) {
-        taskQueue = new LinkedBlockingQueue<>();
+    private ThreadPool(int numOfThreads, TaskScheduler scheduler) {
+        //taskQueue = new LinkedBlockingQueue<>();
+        taskQueue = scheduler;
         workers = new Thread[numOfThreads];
         isShutdownInitiated = new AtomicBoolean(false);
 
@@ -21,16 +23,17 @@ public class ThreadPool {
         }
     }
 
-    public static synchronized ThreadPool getInstance(int numOfThreads) {
+    public static synchronized ThreadPool getInstance(int numOfThreads, TaskScheduler scheduler) {
         if(INSTANCE==null) {
-            INSTANCE = new ThreadPool(numOfThreads);
+            INSTANCE = new ThreadPool(numOfThreads, scheduler);
         }
         return INSTANCE;
     }
 
     public void submitTask(Runnable task) {
         if(!isShutdownInitiated.get()) {
-            taskQueue.offer(task);
+            //taskQueue.offer(task);
+            taskQueue.submitTask(task);
         }
     }
 
